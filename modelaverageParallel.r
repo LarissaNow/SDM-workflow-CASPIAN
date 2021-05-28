@@ -15,15 +15,15 @@ modelaverageParallel <- function(suitability, envir) { ## start of main function
   it <- 1 # this is simply an iterator to give each loop run a separate number in the column name
   
   for(i in suitability) { # in this loop, I collect all the predicted suitabilities over the different model runs and add them to the data frame from above
-    xxx <- i[,-c(1:(num+2))]
+    xxx <- i[,-c(1:(length(envir)+2))]
     colnames(xxx) <- rep(paste0("predictionPA",it),length(colnames(xxx)))
     dataempty <- cbind(dataempty,xxx)
     it <- it+1
   }
   
-  dataempty$modelaverage <- apply(dataempty[,-c(1:(num+2))], MARGIN = 1, FUN = mean) 
+  dataempty$modelaverage <- apply(dataempty[,-c(1:(length(envir)+2))], MARGIN = 1, FUN = mean) 
   # compute the mean over the different model runs
-  dataempty$modelsd <- apply(dataempty[,-c(1:(num+2))], MARGIN = 1, FUN = sd) 
+  dataempty$modelsd <- apply(dataempty[,-c(1:(length(envir)+2))], MARGIN = 1, FUN = sd) 
   # compute the sd over the different model runs
   
   write.csv(dataempty[,c(1:(length(envir)+2),length(colnames(dataempty))-1, length(colnames(dataempty)))], 
