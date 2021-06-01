@@ -14,15 +14,20 @@ plotSuitabilities <- function(avgsuitability, occ) { ## start of main function
   rastpreds <- raster(avgsuitability2)
   
   plot(rastpreds) # plot the predicted probabilities
-  points(occ, pch=1, cex=0.5) # plot occurrences
+  
+  if(!is.null(filecropbase)) {points(occ, pch=1, cex=0.5, xlim=filecropbase[1:2], ylim=filecropbase[3:4])
+    } else{points(occ, pch=1, cex=0.5)} # plot occurrences
   
   # store plots on the user computer:
   pdf(file.path("output", paste0("Suitability_",identifier,".pdf"))) # plot without occurrences
   plot(rastpreds)
   dev.off()
-  pdf(file.path("output", paste0("SuitabilityOccurrences_",identifier,".pdf"))) # plot with occurrences
+ 
+   pdf(file.path("output", paste0("SuitabilityOccurrences_",identifier,".pdf"))) # plot with occurrences
   plot(rastpreds)
-  points(occ, pch=1, cex=0.3)
+  if(!is.null(filecropbase)) {
+    points(occ, pch=1, cex=0.5, xlim=filecropbase[1:2], ylim=filecropbase[3:4])
+    } else{points(occ, pch=1, cex=0.5)}
   dev.off()
   
   return(rastpreds)
