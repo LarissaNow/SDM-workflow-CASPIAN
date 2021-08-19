@@ -13,21 +13,23 @@ plotSuitabilities <- function(avgsuitability, occ) { ## start of main function
   gridded(avgsuitability2) <- T
   rastpreds <- raster(avgsuitability2)
   
-  plot(rastpreds) # plot the predicted probabilities
+  par(bty="l")
   
-  if(!is.null(filecropbase)) {points(occ, pch=1, cex=0.5, xlim=filecropbase[1:2], ylim=filecropbase[3:4])
-    } else{points(occ, pch=1, cex=0.5)} # plot occurrences
+  plot(rastpreds, col=viridis(100)) # plot the predicted probabilities
+  
+  if(!is.null(filecropbase)) {points(occ, pch=1, cex=0.5, xlim=filecropbase[1:2], ylim=filecropbase[3:4], col="white")
+    } else{points(occ, pch=1, cex=0.5, col="black")} # plot occurrences
   
   # store plots on the user computer:
   pdf(file.path("output", paste0("Suitability_",identifier,".pdf"))) # plot without occurrences
-  plot(rastpreds)
+  plot(rastpreds, col=viridis(100))
   dev.off()
  
    pdf(file.path("output", paste0("SuitabilityOccurrences_",identifier,".pdf"))) # plot with occurrences
-  plot(rastpreds)
+  plot(rastpreds, col=viridis(100))
   if(!is.null(filecropbase)) {
-    points(occ, pch=1, cex=0.5, xlim=filecropbase[1:2], ylim=filecropbase[3:4])
-    } else{points(occ, pch=1, cex=0.5)}
+    points(occ, pch=1, cex=0.5, xlim=filecropbase[1:2], ylim=filecropbase[3:4], col="black")
+    } else{points(occ, pch=1, cex=0.5, col="black")}
   dev.off()
   
   return(rastpreds)
