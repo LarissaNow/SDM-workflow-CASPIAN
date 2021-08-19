@@ -17,7 +17,7 @@ predictGAMParallel <- function(baseenvir, modelruns100) { ## start of main funct
   funtem <- function(listele){ ## start of sub function
     # the function will be applied over the list of PA samples, the loop loops through the five data-splits per PA sample
     
-    for(n in listele){if(n$AUC>0.7){ # remove models with a bad AUC
+    for(n in listele){if(n$AUC>0.7|!is.na(n$AUC)){ # remove models with a bad AUC
    
     testpred <- as.data.frame(predict(n$mod,newdata=baseenvir,type="response",se.fit=FALSE)) 
     # predict suitabilities (this part of the function is slowest)
@@ -37,7 +37,7 @@ predictGAMParallel <- function(baseenvir, modelruns100) { ## start of main funct
   parallel::clusterCall(cl, function() library(mgcv)) 
   # make the mgcv package accesible in each cluster, this is needed to allow predictions from a GAM
   parallel::clusterExport(cl,list('funtem','modelruns100', 'prednewenvir', 'baseenvir'),envir=environment())
-  predictionslist <- c(parallel::parLapply(cl,modelruns100,fun=funtem)) # this runs the function from above in parallel on the different PA samples in the listmodelruns100 and saves the ouput as list
+  predictionslist <- c(parallel::parLapply(cl,modelruns100,fun=funtem)) # this runs the function from above in parallel on the different PA samples in the list modelruns100 and saves the ouput as list
   stopCluster(cl)
   
   return(predictionslist)
