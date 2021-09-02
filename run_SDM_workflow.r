@@ -14,7 +14,7 @@
 ## source: https://github.com/christianhof/BioScen1.5_SDM/blob/master/R
 
 packages <- c("raster", "rgbif", "CoordinateCleaner", "maps", "dismo", "ggplot2", 
-              "rgdal", "mgcv", "PresenceAbsence", "doParallel") # list of required packages
+              "rgdal", "mgcv", "PresenceAbsence", "doParallel", "viridis") # list of required packages
 
 new.packages <- packages[!(packages %in% installed.packages()[,"Package"])] #check which of them is not yet installed
 if(length(new.packages)) install.packages(new.packages); rm(new.packages) #install them
@@ -30,7 +30,7 @@ dir.create("output")
 ##########################################################################################################
 ## everything the user needs to specify ##################################################################
 
-identifier <- "run.180821.2.Lj" # a unique identifier for every run of the SDM workflow, needs to be a character
+identifier <- "run.270821.2.Lj" # a unique identifier for every run of the SDM workflow, needs to be a character
 
 myspecies <- "Lonicera japonica" # focal species, user should insert the scientific name as character string in the shown format here
 
@@ -38,7 +38,7 @@ occ <- read.csv("occtemp.csv")[-1] # alternatively, the user can insert a table 
 
 envir <- c("bio1", "bio12") # environmental variables of choice, user should insert the names of the desired variables as character string as shown here
 
-landcov <- NULL #c("LC2", "LC12") # land cover variables of choice, user should insert the names of the desired variables as character string as shown here
+landcov <- c("LC2", "LC12") # land cover variables of choice, user should insert the names of the desired variables as character string as shown here
 
 filecrop <-c(NULL) # optional:the extent to which the area for model fitting (!) should be cropped; set to NULL for global extent
 #note: this is not yet implemented in the functions
@@ -49,6 +49,7 @@ load(file.path("output", paste0("PAlist",identifier,".RData"))) # optional: the 
 
 load(file.path("output", paste0("suitability",identifier,".RData"))) # optional: the user can load the environmental suitability list here, if she/he has already computed the suitabilities
 
+netshp <- readOGR() # read in the traffic network shapefile that is utiized in the CASPIAN workflow
 
 ##########################################################################################################
 ## load functions ########################################################################################
@@ -87,3 +88,7 @@ save(suitability, file=file.path("output", paste0("suitability",identifier,".RDa
 if(!is.null(landcov)){avgsuitability <- modelaverageParallelLC(suitability, envir, landcov)} else{avgsuitability <- modelaverageParallel(suitability, envir)} # averages the predicted environmental suitability across the different models and saves a csv-file with the average suitabilities over the model runs
 
 rasterSuitabilities <- plotSuitabilities(avgsuitability,occ) # transforms the average suitabilities to a raster file, plots them, saves the plot as pdf and returns the raster file
+
+trafficnet <- SuitabilityNet(netshp, rasterSuitabilities) # computes the mean and standard deviation of environmental suitabilities for each link (line segment) in the traffic network, returns a shapefile
+
+writeOGR(trafficnet, dsn="output", layer=paste0("Traffic_net_env_",identifier), driver="ESRI Shapefile") # saves the shape file from the previous step
