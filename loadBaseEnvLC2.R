@@ -25,19 +25,21 @@ loadBaseEnvLC2 <- function(envir,filecropbase,landcov){ ## start of main functio
                      "LC41.tif","LC42.tif", "LC43.tif", "LC44.tif")) #load the raster stack with the land cover data
   # note LC38 is somehow missing
   
-  LCStack <- subset(LCStack, landcov) #subset the land cover data to the environmental data of interest as specified by the user
+  LCStack <- subset(LCStack, landcov) # subset the land cover data to the environmental data of interest as specified by the user
   
-  if(!is.null(filecropbase)) {newenvstack <- crop(newenvstack, filecropbase)}
+  plot(LCStack)
+  
+  newenvstack <- crop(newenvstack, LCStack) # crop climate data to the extend of the land cover data
+  
+  newenvstack <- stack(newenvstack, LCStack) # stack the climate and the land cover layers
+  
+  plot(newenvstack) # plot the layers
+  
+  if(!is.null(filecropbase)) {newenvstack <- crop(newenvstack, filecropbase)} # crop to extend chosen by user (if any)
 
   newenvirtab <- rasterToPoints(newenvstack) # prepare data frame to be used in the predictions
   newenvirtab <- as.data.frame(newenvirtab)
   
-  if(length(landcov)==1){newenvirtab2 <- cbind(newenvirtab, landcov = raster::extract(x = LCStack, y = data.frame(newenvirtab[,c('x','y')])))}
-  else{newenvirtab2 <- cbind(newenvirtab, raster::extract(x = LCStack, y = data.frame(newenvirtab[,c('x','y')])))} # add land cover data
-  #newenvirtab <- newenvirtab[complete.cases(newenvirtab),] # subset to grid cells with land cover data, so far only available for Europe
-
-  newenvirtab2 <- newenvirtab2[complete.cases(newenvirtab2),] #to subset the data to cells for which land cover data is available
-  
-  return(newenvirtab2)
+  return(newenvirtab)
 
 } ## end of main function
