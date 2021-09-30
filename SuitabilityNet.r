@@ -6,7 +6,7 @@
 # Author: Larissa Nowak
 #################################################################################
 
-SuitabilityNet <- function(netshp, rasterSuitabilities){ ## START of main function
+SuitabilityNet <- function(netshp, rasterSuitabilities){ ## start of main function
 
   coordnet <- coordinates(netshp) # exctract the coordinates of the links (line segments) in the shapefile
 
@@ -18,17 +18,15 @@ SuitabilityNet <- function(netshp, rasterSuitabilities){ ## START of main functi
     emptylist[[n]] <- extract(rasterSuitabilities,i[[1]])
     n<-n+1}
 
-  suitabs <- as.matrix(sapply(emptylist,FUN=mean)) # compute the mean accross the suitabilities along the link
+  suitabs <- c(sapply(emptylist,FUN=mean)) # compute the mean accross the suitabilities along the link
 
-  netshp["Env_suit"] <- suitabs # add the mean suitabilities to the attributes data frame of the shapefile
+  netshp$Env_suit <- suitabs # add the mean suitabilities to the attributes data frame of the shapefile
   # this step requires that the coordinate matrices are given in the same order as the attributes in the attribute table of the shapefile!!!
 
-  suitabsSD <- as.matrix(sapply(emptylist,FUN=sd)) # compute the standard deviation accross the suitabilities along the link
+  suitabsSD <- c(sapply(emptylist,FUN=sd)) # compute the standard deviation accross the suitabilities along the link
 
-  netshp["Env_suit_SD"] <- suitabsSD # add the standard deviation of the suitabilities to the attributes data frame of the shapefile
+  netshp$Env_suit_SD <- suitabsSD # add the standard deviation of the suitabilities to the attributes data frame of the shapefile
 
-  return(netshp) # rwturn the input shapefile with the newly addd data
+  return(netshp) # return the input shapefile with the newly added data
 
-  } ## END of main function
-
-# What needs to be added: the link between each line segment here and its ID in the datatable so that the mean suitabilities can be added to the data table
+  } ## end of main function

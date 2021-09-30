@@ -1,7 +1,7 @@
 ###########################################################################################################
 #
 # Function to randomly sample five sets of pseudo absences (PA), extract environmental data for them 
-# and combine them with the occurrence data of the foccal species
+# and combine them with the occurrence data of the focal species
 # With parallelization
 # This function is part of the SDM workflow. 
 #
@@ -37,8 +37,9 @@ PAsampleParallel <- function(occenv, envir) { ## start of main function
     PA$y <- NULL
     PA$Presence <- 0
    
-    PAenv <- cbind(PA, raster::extract(x = envstack, y = data.frame(PA[,c('decimalLongitude','decimalLatitude')]))) 
-    # combining PAs with environmental info
+    if(length(envir)==1) {PAenv <- cbind(PA, envir = raster::extract(x = envstack, y = data.frame(PA[,c('decimalLongitude','decimalLatitude')]))) 
+    colnames(PAenv) <- c("decimalLongitude", "decimalLatitude", "Presence", envir[1])} else{PAenv <- cbind(PA, raster::extract(x = envstack, y = data.frame(PA[,c('decimalLongitude','decimalLatitude')])))} 
+    # combining PAs with environmental info; the if else clause is needed to avoid weird column names, if only one climate variable is used.
    
     OccenvPA <- rbind(occenv, PAenv) # combining PAs with occurrences
     OccenvPA <- list(OccenvPA) # not sure anymore, why I did this...

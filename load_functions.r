@@ -6,8 +6,8 @@
 ##########################################################################################################
 
 
-########################################################################
-### load scripts #######################################################
+###########################################################################
+### load functionss #######################################################
 
 # data preparation
 source("userdatacheck.r")
@@ -25,7 +25,6 @@ source("GAMfittingLC2.r")
 source("loadBaseEnv.r")
 source("loadBaseEnvLC2.r")
 source("predictGAMParallel.r")
-source("predictGAMParallelLC.r")
 source("modelaverageParallel.r")
 source("modelaverageParallelLC.r")
 source("plotSuitabilities.r")

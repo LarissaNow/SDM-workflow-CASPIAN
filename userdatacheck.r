@@ -10,6 +10,6 @@ userdatacheck <- function(occ) { ## start of main function
   
   noofocc <- length(occ$Presence==1) 
   
-  if(noofocc < 50) {print("NOTE: The number of occurrences is < 50. SDMs might not yield reliable results. Consider downloading GBIF data.")} # notification for the user
+  if(noofocc < 50) {print("Note: The number of occurrences is < 50. SDMs might not yield reliable results. Consider downloading GBIF data.")} # notification for the user
   
   } ## end of main function

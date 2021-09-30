@@ -25,7 +25,7 @@ GAMfitting <- function(PAlist) { ## start of main function
     
     r <- 1:5 # Repeat modelling five times on a 30/70 split #adjust number according to the number of runs you want to have
     
-    final.mods <- lapply(r,function(x){ # this creates a list with the model outputs plus AUC of the ten model runs (fitted with ten   different random 70-30 data splits)
+    final.mods <- lapply(r,function(x){ # this creates a list with the model outputs plus AUC of the five model runs (fitted with five different random 70-30 data splits)
       smp_size <- floor(0.3 * nrow(data.model)) # 70-30 split is done here
       train_ind <- sample(seq_len(nrow(data.model)), size = smp_size)
       fit.blocks <- data.model[-train_ind, ]
@@ -52,7 +52,7 @@ GAMfitting <- function(PAlist) { ## start of main function
       
     })
     
-    assign(paste0(names(i[1]),"final.mods"),final.mods)}
+    assign(paste0(names(i[1]),"final.mods"),final.mods)} # this creates an object with a distinct name and stores the model-runs for one PA sample in it
   
   modelruns100 <- list(PA1final.mods, PA2final.mods, PA3final.mods, PA4final.mods, PA5final.mods)
   # combine the different model runs into one list

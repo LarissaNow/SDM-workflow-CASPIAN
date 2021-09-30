@@ -7,24 +7,26 @@
 # Author: Larissa Nowak
 ##########################################################################################################
 
-addenvir2 <- function(envir) { ## start main function
+addenvir2 <- function(envir) { ## start of main function
   
-  fullenvir <- raster::getData(name = "worldclim",var = "bio", res = 2.5) #this is from the package raster
-  
-  envstack <- subset(fullenvir, envir)
-  
-  plot(envstack) #note: habitat data is still missing
-  corr <- layerStats(envstack, 'pearson', na.rm=T) # not yet adapted for habitat data! For this it needs to be a different type of correlation
+  fullenvir <- raster::getData(name = "worldclim",var = "bio", res = 2.5)
+  # download the full set of bioclimatic variables from worldclim at 2.5 min resolution, result is a raster stack
+  envstack <- subset(fullenvir, envir) # subset the raster stack to climate variables of choice
+  rm(fullenvir)
+    
+  plot(envstack)
+  corr <- layerStats(envstack, 'pearson', na.rm=T) # correlation test for the climate variables of choice
   
   print("Correlation of environmental predictors:")
   print(corr$'pearson correlation coefficient')
-  print("NOTE: If cor > 0.7 consider removing some of the environmental predictors to reduce multicolinearity.")
+  print("Note: If |cor| > 0.5 consider removing some of the environmental predictors to reduce multicolinearity.")
   # notifications for the user
   
   # - 2) extract environment values from locations at which species occur and merge that with species occurrences in table 
   
-  occenv <- cbind(occ, raster::extract(x = envstack, y = data.frame(occ[,c('decimalLongitude','decimalLatitude')]))) 
-  # extract environmental info for grid cells in which the target species occurs
+  if(length(envir)==1) {occenv <- cbind(occ, envir = raster::extract(x = envstack, y = data.frame(occ[,c('decimalLongitude','decimalLatitude')])))
+  colnames(occenv) <- c("decimalLongitude", "decimalLatitude", "Presence", envir[1])} else{occenv <- cbind(occ, raster::extract(x = envstack, y = data.frame(occ[,c('decimalLongitude','decimalLatitude')])))} 
+  # combining occurrences with environmental info; the if else clause is needed to avoid weird column names, if only one climate variable is used.
   
   return(occenv)
 } ## end of main function

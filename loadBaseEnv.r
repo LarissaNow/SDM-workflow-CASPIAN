@@ -7,17 +7,15 @@
 # Author: Larissa Nowak
 ##########################################################################################################
 
-# Note: so far, this function uses the same environmental data used for model fitting (WorldClim). Here we need to think about a way of combining this with CASPIAN
-
 loadBaseEnv <- function(envir,filecropbase){ ## start of main function
   
   fullenvir <- raster::getData(name = "worldclim",var = "bio", res = 2.5) 
-  # get environmental data
+  # get bioclimatic data
   
   newenvstack <- raster::subset(fullenvir, envir) 
-  # subset environmental data to desired environmental variables
+  # subset climate data to desired environmental variables
   
-  if(!is.null(filecropbase)) {newenvstack <- crop(newenvstack, filecropbase)}
+  if(!is.null(filecropbase)) {newenvstack <- crop(newenvstack, filecropbase)} # crop to extend chosen by user (if any)
 
   newenvirtab <- rasterToPoints(newenvstack) # prepare data frame to be used in the predictions
   newenvirtab <- as.data.frame(newenvirtab) 
